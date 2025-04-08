@@ -1,27 +1,27 @@
 import React, { useState } from 'react'
 import ImageUpload from './ImageUpload'
 import ImagePreview from './ImagePreview'
-import { enchancedImageAPi } from '../utils/enhanceimageApi'
+import { enhancedImageAPi } from '../utils/enhanceimageApi'
 
 const Home = () => {
     const [uploadimg,setUploadimg]=useState(null)
     const [enhancedimg,setEnhancedimg]=useState(null)
     const [loading, setLoading]=useState(false);
-
+    
 
 
    async function extractFile(file){
         
-        const newfile=URL.createObjectURL(file);  // convert the file to object
+        const imageURL=URL.createObjectURL(file);  // convert the file to object
         
-        setUploadimg(newfile);
+        setUploadimg(imageURL);
         
         setLoading(true);
 
         // api call
 
      try {
-        const enhancedUrl=await enchancedImageAPi(file);
+        const enhancedUrl=await enhancedImageAPi(file);
 
         setEnhancedimg(enhancedUrl);
 

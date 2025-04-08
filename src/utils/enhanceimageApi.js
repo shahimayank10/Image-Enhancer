@@ -28,6 +28,11 @@ const uploadData=async(file)=>{
     { headers:{ "X-API-KEY": API_KEY, },  
     }
   );
+
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      await delay(4000);
+      
   console.log(data);
 
   if (!data?.data?.task_id){

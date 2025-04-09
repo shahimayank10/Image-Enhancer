@@ -1,13 +1,16 @@
 import axios from 'axios'
-const API_KEY = "wx1jkcv12jtkqtun2";
+const API_KEY = "wxyn8mhshqntd258l"; 
 const BASE_URL = "https://techhk.aoscdn.com/";
 
 export async function enhancedImageAPi(file) {
   try {
     const task_id=await uploadData(file);
 
+    // console.log(task_id);
+    
 
-      const enhancedimage = await fetchData(task_id);
+
+      const enhancedimage = await PollingfetchData(task_id);
 
     // console.log("enhance image",enhancedimage);
 
@@ -29,11 +32,7 @@ const uploadData=async(file)=>{
     }
   );
 
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-      await delay(4000);
-      
-  console.log(data);
 
   if (!data?.data?.task_id){
     return new Error("problem in uploading");
@@ -46,7 +45,6 @@ const uploadData=async(file)=>{
 const fetchData=async (taskId)=>{
 
 
-try {
   const { data } = await axios.get(
     `${BASE_URL}/api/tasks/visual/scale/${taskId}`,
     { headers: { "X-API-KEY": API_KEY } }
@@ -59,21 +57,40 @@ try {
     throw new Error(result.err_message);
   }
 
-  if (result.state !== 1 || !result.image) {
-    // console.log("Still processing or failed:", result);
-     throw new Error("fail in generating image");
+  
+  // console.log("Upload success:", result.image);
+  return result;
+
+
+
+}
+
+
+ const PollingfetchData= async (task_id, ren=0) => {
+ 
+  const result =await fetchData(task_id);
+
+  if(result.state === 4){
+ 
+    console.log("processing....");
+    
+    if(ren >=10){
+      // console.log("error on generating the image")
+      alert("took too much time to generate");
+    }
+
+    await new Promise((resolve)=>setTimeout(resolve,2000)) 
+    
+
+    return PollingfetchData(task_id,ren+1);
+
   }
 
-  console.log("Upload success:", result.image);
   return result.image;
 
-
-} catch (error) {
-  alert("Error fetching result:"+ error.message);
-  return null;
 }
 
 
-}
+// fetchData("48006e7d-e660-4f0c-a808-836d56f81d59");
 
-// fetchData("f28832fc-2d5a-4777-a8fa-d200eaff8c5c");
+
